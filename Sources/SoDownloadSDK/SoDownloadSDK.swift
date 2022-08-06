@@ -119,7 +119,7 @@ extension SoDownloadSDK {
 }
 extension SoDownloadSDK: URLSessionTaskDelegate {
     
-    private func object(for task: URLSessionTask) -> DownloadTask? {
+    private func downloadTask(for task: URLSessionTask) -> DownloadTask? {
         return tasks.first(where: { $0.task.taskIdentifier == task.taskIdentifier })
     }
     
@@ -128,7 +128,7 @@ extension SoDownloadSDK: URLSessionTaskDelegate {
 extension SoDownloadSDK: URLSessionDownloadDelegate {
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let task = self.object(for: downloadTask) else { return }
+        guard let task = self.downloadTask(for: downloadTask) else { return }
         do {
             let newLocation = try task.move(from: location)
             let documentsUrl = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
@@ -142,5 +142,11 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
         self.removeTask(task: task)
     }
     
+    
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        guard let task = self.downloadTask(for: downloadTask) else { return }
+        // single item progress report
+        delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToResource: task.object) }
+    }
     
 }
