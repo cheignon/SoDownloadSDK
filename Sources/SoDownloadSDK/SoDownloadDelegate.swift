@@ -49,3 +49,23 @@ public protocol SoDownloadDelegate: AnyObject {
     func downloader(_ downloader: SoDownloadSDK, didFinishWithMostRecentError error: Error?)
     
 }
+
+public extension SoDownloadDelegate {
+    // Default implementations for making methods optional
+    
+    func downloader(_ downloader: SoDownloadSDK, didStartDownloadingResource resource: DownloadObject, withTask task: URLSessionDownloadTask) {
+        
+    }
+    
+    func downloader(_ downloader: SoDownloadSDK, didUpdateStatusOfTask task: URLSessionDownloadTask, relatedToResource resource: DownloadObject) {
+        
+    }
+    
+    func downloader(_ downloader: SoDownloadSDK, didCompleteWithError error: Error?, withTask task: URLSessionDownloadTask, whenDownloadingResource resource: DownloadObject) {
+        
+    }
+    
+    func downloader(_ downloader: SoDownloadSDK, didFinishWithMostRecentError error: Error?) {
+        
+    }
+}
