@@ -21,6 +21,7 @@ internal class DownloadsFileManager: DownloadFileManagerProtocol {
     }
     
     func createUrl(for fileName: String) throws -> URL {
+        try directory(create: true)
         try createDownloadsDirectoryIfNeeded()
         return try generateUrl(for: fileName)
     }
