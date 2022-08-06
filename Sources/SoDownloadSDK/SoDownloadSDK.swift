@@ -123,9 +123,26 @@ extension SoDownloadSDK: URLSessionTaskDelegate {
         return tasks.first(where: { $0.task.taskIdentifier == task.taskIdentifier })
     }
     
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let myTask = self.downloadTask(for: task) else { return }
+        let downloadTask = task as! URLSessionDownloadTask
+        delegates.call{ $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingResource: myTask.object) }
+        myTask.terminated?()
+        removeTask(task: myTask)
+    }
+    
 }
 
 extension SoDownloadSDK: URLSessionDownloadDelegate {
+  
+    
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        guard let task = self.downloadTask(for: downloadTask) else { return }
+        // single item progress report
+        delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToResource: task.object) }
+
+        // maybe should consider some groupped resources progress reporting ...
+    }
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard let task = self.downloadTask(for: downloadTask) else { return }
@@ -133,20 +150,13 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
             let newLocation = try task.move(from: location)
             let documentsUrl = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             let relativePath = String(newLocation.path.replacingOccurrences(of: documentsUrl.path, with: "").dropFirst())
-            let file = DownloadedFile(relativePath: relativePath)
+            let file = try DownloadedFile(relativePath: relativePath)
             delegates.call { $0.downloader(self, didFinishDownloadingResource: task.object, toFile: file) }
         } catch let error {
             delegates.call { $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingResource: task.object) }
         }
         task.terminated?()
-        self.removeTask(task: task)
-    }
-    
-    
-    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        guard let task = self.downloadTask(for: downloadTask) else { return }
-        // single item progress report
-        delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToResource: task.object) }
+        removeTask(task: task)
     }
     
 }
