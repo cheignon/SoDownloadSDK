@@ -98,6 +98,15 @@ public class SoDownloadSDK: NSObject {
         return tasks.array
     }
     
+    public func downloadTask(for object: DownloadObject) -> URLSessionDownloadTask? {
+        return downloadTask(forTaskDescription: object.taskDescription)
+    }
+    public func downloadTask(forTaskDescription taskDescription: String) -> URLSessionDownloadTask? {
+        return tasks.first { task in
+            return task.object.taskDescription == taskDescription
+        }?.task
+    }
+    
 }
 
 extension SoDownloadSDK {
