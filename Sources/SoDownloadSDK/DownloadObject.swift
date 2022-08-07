@@ -14,9 +14,9 @@ public struct DownloadObject: Equatable {
     public let name: String
 
     
-    public init(url: URL?) {
+    public init(url: String) {
         self.taskDescription = UUID().uuidString
-        self.url = url
+        self.url = URL(string: url)
         guard let path = self.url?.lastPathComponent else {
             self.name = "unknown"
             return
