@@ -14,11 +14,11 @@ public class DownloadsFileManager: DownloadFileManagerProtocol {
         return DownloadsFileManager(with: "SoDownloadSDK")
     }
     
-    func removeFile(withUrl url: URL) throws {
+    public func removeFile(withUrl url: URL) throws {
         try FileManager.default.removeItem(atPath: url.path)
     }
     
-    func createUrl(for fileName: String) throws -> URL {
+    public func createUrl(for fileName: String) throws -> URL {
         try createDownloadsDirectoryIfNeeded()
         return try generateUrl(for: fileName)
     }
@@ -30,22 +30,22 @@ public class DownloadsFileManager: DownloadFileManagerProtocol {
         self.downloadsDirectory = downloadsDirectory
     }
     
-    func directory(create: Bool = false) throws -> URL {
+    public func directory(create: Bool = false) throws -> URL {
         return try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: create)
                 .appendingPathComponent(self.downloadsDirectory)
     }
     
-    func move(from source: URL, to destination: URL) throws {
+    public func move(from source: URL, to destination: URL) throws {
         return try FileManager.default.moveItem(at: source, to: destination)
     }
     
-    func cleanDirectory() throws {
+    public func cleanDirectory() throws {
         let directory = try directory()
         let content = try FileManager.default.contentsOfDirectory(atPath: directory.path)
         try content.forEach({ try FileManager.default.removeItem(atPath: "\(directory.path)/\($0)")})
     }
     
-    func generateUrl(for fileName: String) throws -> URL {
+    public func generateUrl(for fileName: String) throws -> URL {
         
         let directory = try directory(create: true)
         

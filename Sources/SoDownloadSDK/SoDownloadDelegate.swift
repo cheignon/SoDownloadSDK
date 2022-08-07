@@ -11,28 +11,28 @@ public protocol SoDownloadDelegate: AnyObject {
 
     /// - Parameters:
     ///   - downloader: SoDownloadSDK object
-    ///   - resource: Resource which download did start
+    ///   - object: object which download did start
     ///   - task: URLSessionDownloadTask for reading state and observing progress
-    func downloader(_ downloader: SoDownloadSDK, didStartDownloadingResource resource: DownloadObject, withTask task: URLSessionDownloadTask)
+    func downloader(_ downloader: SoDownloadSDK, didStartDownloadingObject object: DownloadObject, withTask task: URLSessionDownloadTask)
     
     /// - Parameters:
     ///   - downloader: SoDownloadSDK object
     ///   - task: URLSessionDownloadTask for reading progress and state
-    ///   - resource: Resource related with download
-    func downloader(_ downloader: SoDownloadSDK, didUpdateStatusOfTask task: URLSessionDownloadTask, relatedToResource resource: DownloadObject)
+    ///   - object: object related with download
+    func downloader(_ downloader: SoDownloadSDK, didUpdateStatusOfTask task: URLSessionDownloadTask, relatedToObject object: DownloadObject)
  
     /// - Parameters:
     ///   - downloader: SoDownloadSDK object
-    ///   - resource: Resource related with download
+    ///   - object: object related with download
     ///   - file: Object that contains relative path to file
-    func downloader(_ downloader: SoDownloadSDK, didFinishDownloadingResource resource: DownloadObject, toFile file: DownloadedFile)
+    func downloader(_ downloader: SoDownloadSDK, didFinishDownloadingObject object: DownloadObject, toFile file: DownloadedFile)
     
     /// - Parameters:
     ///   - downloader: SoDownloadSDK object
     ///   - error: Error that occured during downloading
     ///   - task: URLSessionDownloadTask for getting status / progress
-    ///   - resource: Downloaded resource
-    func downloader(_ downloader: SoDownloadSDK, didCompleteWithError error: Error?, withTask task: URLSessionDownloadTask, whenDownloadingResource resource: DownloadObject)
+    ///   - object: Downloaded object
+    func downloader(_ downloader: SoDownloadSDK, didCompleteWithError error: Error?, withTask task: URLSessionDownloadTask, whenDownloadingObject object: DownloadObject)
 
     /// - Parameters:
     ///   - downloader: SoDownloadSDK object
@@ -44,15 +44,15 @@ public protocol SoDownloadDelegate: AnyObject {
 public extension SoDownloadDelegate {
     // Default implementations for making methods optional
     
-    func downloader(_ downloader: SoDownloadSDK, didStartDownloadingResource resource: DownloadObject, withTask task: URLSessionDownloadTask) {
+    func downloader(_ downloader: SoDownloadSDK, didStartDownloadingObject object: DownloadObject, withTask task: URLSessionDownloadTask) {
         
     }
     
-    func downloader(_ downloader: SoDownloadSDK, didUpdateStatusOfTask task: URLSessionDownloadTask, relatedToResource resource: DownloadObject) {
+    func downloader(_ downloader: SoDownloadSDK, didUpdateStatusOfTask task: URLSessionDownloadTask, relatedToObject object: DownloadObject) {
         
     }
     
-    func downloader(_ downloader: SoDownloadSDK, didCompleteWithError error: Error?, withTask task: URLSessionDownloadTask, whenDownloadingResource resource: DownloadObject) {
+    func downloader(_ downloader: SoDownloadSDK, didCompleteWithError error: Error?, withTask task: URLSessionDownloadTask, whenDownloadingObject object: DownloadObject) {
         
     }
     

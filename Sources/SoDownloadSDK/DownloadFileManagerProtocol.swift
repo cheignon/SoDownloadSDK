@@ -7,7 +7,7 @@
 
 import Foundation
 
-internal protocol DownloadFileManagerProtocol: AnyObject {
+public protocol DownloadFileManagerProtocol: AnyObject {
     func directory(create: Bool) throws -> URL
     func move(from source: URL, to destination: URL) throws
     func cleanDirectory() throws

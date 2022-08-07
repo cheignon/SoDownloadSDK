@@ -11,7 +11,7 @@ public class SoDownloadSDK: NSObject {
     var session: URLSession!
     var delegates: DelegateManager<SoDownloadDelegate>
     
-    init(configuration: DownloadOperationQueueConfiguration = DownloadOperationQueueConfiguration.default, fileManager: DownloadFileManagerProtocol = DownloadsFileManager.default) {
+    public init(configuration: DownloadOperationQueueConfiguration = DownloadOperationQueueConfiguration.default, fileManager: DownloadFileManagerProtocol = DownloadsFileManager.default) {
         self.tasks = SafeArray<DownloadTask>()
         self.configuration = configuration
         self.queue = configuration.queueWithLimit()
@@ -91,7 +91,7 @@ public class SoDownloadSDK: NSObject {
             operation.queuePriority = .normal
         }
         queue.addOperation(operation: operation)
-        delegates.call { $0.downloader(self, didStartDownloadingResource: task.object, withTask: task.task) }
+        delegates.call { $0.downloader(self, didStartDownloadingObject: task.object, withTask: task.task) }
     }
     
     /// cancel task on operation group with diescritpion
@@ -175,7 +175,7 @@ extension SoDownloadSDK: URLSessionTaskDelegate {
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let myTask = self.downloadTask(for: task) else { return }
         let downloadTask = task as! URLSessionDownloadTask
-        delegates.call{ $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingResource: myTask.object) }
+        delegates.call{ $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingObject: myTask.object) }
         myTask.terminated?()
         removeTask(task: myTask)
     }
@@ -187,7 +187,7 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let task = self.downloadTask(for: downloadTask) else { return }
-        delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToResource: task.object) }
+        delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToObject: task.object) }
     }
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -197,9 +197,9 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
             let documentsUrl = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             let relativePath = String(newLocation.path.replacingOccurrences(of: documentsUrl.path, with: "").dropFirst())
             let file = DownloadedFile(relativePath: relativePath)
-            delegates.call { $0.downloader(self, didFinishDownloadingResource: task.object, toFile: file) }
+            delegates.call { $0.downloader(self, didFinishDownloadingObject: task.object, toFile: file) }
         } catch let error {
-            delegates.call { $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingResource: task.object) }
+            delegates.call { $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingObject: task.object) }
         }
         task.terminated?()
         removeTask(task: task)
