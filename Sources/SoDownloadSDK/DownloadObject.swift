@@ -12,11 +12,17 @@ public struct DownloadObject: Equatable {
     public let taskDescription: String
     public let url: URL?
     public let name: String
+
     
-    public init(taskDescription: String, url: URL?, name: String) {
-        self.taskDescription = taskDescription
+    public init(url: URL?) {
+        self.taskDescription = UUID().uuidString
         self.url = url
-        self.name = name
+        guard let path = self.url?.lastPathComponent else {
+            self.name = "unknown"
+            return
+        }
+        self.name = path
+
     }
     
     public static func == (lhs: DownloadObject, rhs: DownloadObject) -> Bool {

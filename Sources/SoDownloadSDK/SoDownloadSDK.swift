@@ -23,6 +23,10 @@ public class SoDownloadSDK: NSObject {
         self.session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: configuration.queue)
     }
     
+    /// remove specific file on disk
+    ///
+    /// - Parameters:
+    ///   - file: DownloadedFile object to remove
     func removeFile(file: DownloadedFile) throws {
         let url = try file.url()
         try fileManager.removeFile(withUrl: url)
@@ -30,6 +34,10 @@ public class SoDownloadSDK: NSObject {
     
     var lastError: Error?
     
+    /// remove specific task when is finished or canceled
+    ///
+    /// - Parameters:
+    ///   - task: DownloadTask object to remove
     func removeTask(task: DownloadTask) {
         tasks.remove(where: { $0 == task })
         if tasks.isEmpty {
@@ -37,6 +45,10 @@ public class SoDownloadSDK: NSObject {
         }
     }
     
+    /// add file to download  on the queue
+    ///
+    /// - Parameters:
+    ///   - object: DownloadObject object to add
     public func addDownload(for object: DownloadObject) throws {
         cleanError()
         let task = try DownloadTask(object: object, fileManager: self.fileManager, session: self.session)
@@ -49,11 +61,15 @@ public class SoDownloadSDK: NSObject {
         lastError = nil
     }
     
+    /// add list of files to download  on the queue
+    ///
+    /// - Parameters:
+    ///   - objects:  array of DownloadObject object to add
     public func addDownload(for objects: [DownloadObject]) throws {
         try objects.forEach { try addDownload(for: $0)}
     }
     
-    func executeOperation(for task: DownloadTask) {
+    private func executeOperation(for task: DownloadTask) {
         let operation = BlockOperation(block: { [weak task] in
             // prevent locking queue
             guard task != nil else { return }
@@ -71,6 +87,10 @@ public class SoDownloadSDK: NSObject {
         delegates.call { $0.downloader(self, didStartDownloadingResource: task.object, withTask: task.task) }
     }
     
+    /// cancel task on operation group with diescritpion
+    ///
+    /// - Parameters:
+    ///   - taskDescription: String representation of task
     public func cancel(download taskDescription: String) {
         guard let filterTask = tasks.filter({ task in
             return task.object.taskDescription == taskDescription
@@ -83,24 +103,41 @@ public class SoDownloadSDK: NSObject {
         }
     }
     
+    /// cancel  list of task on operation group with diescritpion
+    ///
+    /// - Parameters:
+    ///   - tasksDescription: array of String representation of task
     public func cancel(downloads tasksDescription: [String]) {
         tasksDescription.forEach { descritpion in
             self.cancel(download: descritpion)
         }
     }
     
+    /// cancel  all of task on operation group
     public func cancelAllDownloads() {
         tasks.forEach { $0.cancel() }
         tasks.removeAll()
     }
     
+    
+    /// list  of task for file to download
+    /// - Returns: array of DownloadTask
     public func getDownloads() -> [DownloadTask] {
         return tasks.array
     }
     
+    
+    /// get URLSessionDownloadTask from DownloadObject
+    /// - Parameter object: DownloadObject to convert in URLSessionDownloadTask
+    /// - Returns: URLSessionDownloadTask converted
     public func downloadTask(for object: DownloadObject) -> URLSessionDownloadTask? {
         return downloadTask(forTaskDescription: object.taskDescription)
     }
+    
+    
+    /// get URLSessionDownloadTask from taskDescription
+    /// - Parameter taskDescription: descritpion of the task with DownloadTask object
+    /// - Returns: URLSessionDownloadTask converted
     public func downloadTask(forTaskDescription taskDescription: String) -> URLSessionDownloadTask? {
         return tasks.first { task in
             return task.object.taskDescription == taskDescription
@@ -110,9 +147,14 @@ public class SoDownloadSDK: NSObject {
 }
 
 extension SoDownloadSDK {
+    
+    /// add delegate to listen callback of URLSession
+    /// - Parameter object: objecrt  wich respect SoDownloadDelegateProtocol
     public func addDelegate<T: SoDownloadDelegate>(_ object: T) {
         delegates.addDelegate(object)
     }
+    /// remove delegate wich  listen callback of URLSession
+    /// - Parameter object: objecrt  wich respect SoDownloadDelegateProtocol
     public func removeDelegate<T: SoDownloadDelegate>(_ object: T) {
         delegates.removeDelegate(object)
     }
@@ -138,10 +180,7 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let task = self.downloadTask(for: downloadTask) else { return }
-        // single item progress report
         delegates.call { $0.downloader(self, didUpdateStatusOfTask: downloadTask, relatedToResource: task.object) }
-
-        // maybe should consider some groupped resources progress reporting ...
     }
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -150,7 +189,7 @@ extension SoDownloadSDK: URLSessionDownloadDelegate {
             let newLocation = try task.move(from: location)
             let documentsUrl = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             let relativePath = String(newLocation.path.replacingOccurrences(of: documentsUrl.path, with: "").dropFirst())
-            let file = try DownloadedFile(relativePath: relativePath)
+            let file = DownloadedFile(relativePath: relativePath)
             delegates.call { $0.downloader(self, didFinishDownloadingResource: task.object, toFile: file) }
         } catch let error {
             delegates.call { $0.downloader(self, didCompleteWithError: error, withTask: downloadTask, whenDownloadingResource: task.object) }

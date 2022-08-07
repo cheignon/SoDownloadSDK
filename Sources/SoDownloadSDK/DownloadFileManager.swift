@@ -9,9 +9,7 @@ import Foundation
 
 
 internal class DownloadsFileManager: DownloadFileManagerProtocol {
-   
-   
-    
+       
     public static var `default`: DownloadsFileManager {
         return DownloadsFileManager(with: "SoDownloadSDK")
     }
@@ -21,7 +19,6 @@ internal class DownloadsFileManager: DownloadFileManagerProtocol {
     }
     
     func createUrl(for fileName: String) throws -> URL {
-        try directory(create: true)
         try createDownloadsDirectoryIfNeeded()
         return try generateUrl(for: fileName)
     }
@@ -50,7 +47,7 @@ internal class DownloadsFileManager: DownloadFileManagerProtocol {
     
     func generateUrl(for fileName: String) throws -> URL {
         
-        let directory = try directory()
+        let directory = try directory(create: true)
         
         let basePath = directory.appendingPathComponent(fileName)
         let fileExtension = basePath.pathExtension
