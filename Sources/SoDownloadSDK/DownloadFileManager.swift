@@ -26,6 +26,10 @@ public class DownloadsFileManager: DownloadFileManagerProtocol {
     
     let downloadsDirectory: String
     
+    public init() {
+        self.downloadsDirectory = "SoDownloadSDK"
+    }
+    
     public init(with downloadsDirectory: String) {
         self.downloadsDirectory = downloadsDirectory
     }

@@ -11,6 +11,18 @@ public class SoDownloadSDK: NSObject {
     var session: URLSession!
     var delegates: DelegateManager<SoDownloadDelegate>
     
+    public override init() {
+        self.tasks = SafeArray<DownloadTask>()
+        self.configuration = DownloadOperationQueueConfiguration.default
+        self.queue = self.configuration.queueWithLimit()
+        self.fileManager = DownloadsFileManager.default
+        self.delegates = DelegateManager<SoDownloadDelegate>(delegateQueue: DispatchQueue.main)
+        
+        let sessionConfiguration = URLSessionConfiguration.background(withIdentifier: "SoDownloadSDK.backgroundSessionConfiguration")
+        super.init()
+        self.session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: configuration.queue)
+    }
+    
     public init(configuration: DownloadOperationQueueConfiguration = DownloadOperationQueueConfiguration.default, fileManager: DownloadFileManagerProtocol = DownloadsFileManager.default) {
         self.tasks = SafeArray<DownloadTask>()
         self.configuration = configuration
