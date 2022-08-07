@@ -26,7 +26,7 @@ public class DownloadsFileManager: DownloadFileManagerProtocol {
     
     let downloadsDirectory: String
     
-    init(with downloadsDirectory: String) {
+    public init(with downloadsDirectory: String) {
         self.downloadsDirectory = downloadsDirectory
     }
     
