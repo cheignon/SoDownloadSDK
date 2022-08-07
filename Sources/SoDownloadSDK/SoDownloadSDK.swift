@@ -18,7 +18,7 @@ public class SoDownloadSDK: NSObject {
         self.fileManager = fileManager
         self.delegates = DelegateManager<SoDownloadDelegate>(delegateQueue: DispatchQueue.main)
         
-        let sessionConfiguration = URLSessionConfiguration.default
+        let sessionConfiguration = URLSessionConfiguration.background(withIdentifier: "SoDownloadSDK.backgroundSessionConfiguration")
         super.init()
         self.session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: configuration.queue)
     }
