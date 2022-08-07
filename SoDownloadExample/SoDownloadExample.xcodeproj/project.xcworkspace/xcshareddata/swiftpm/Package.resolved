@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "sodownloadsdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cheignon/SoDownloadSDK.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d350f52ac42cf9eac6f9137e224dceda18f5bd5a"
+      }
+    }
+  ],
+  "version" : 2
+}
