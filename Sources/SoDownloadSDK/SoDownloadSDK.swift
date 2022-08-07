@@ -2,6 +2,17 @@ import Foundation
 
 public class SoDownloadSDK: NSObject {
     
+    public init(configuration: DownloadOperationQueueConfiguration, tasks: SafeArray<DownloadTask>, queue: DownloadOperationQueue, fileManager: DownloadFileManagerProtocol, session: URLSession? = nil, delegates: DelegateManager<SoDownloadDelegate>, lastError: Error? = nil) {
+        self.configuration = configuration
+        self.tasks = tasks
+        self.queue = queue
+        self.fileManager = fileManager
+        self.session = session
+        self.delegates = delegates
+        self.lastError = lastError
+    }
+    
+    
     public static var shared = SoDownloadSDK()
     
     let configuration: DownloadOperationQueueConfiguration

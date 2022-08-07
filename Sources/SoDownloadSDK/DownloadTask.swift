@@ -8,10 +8,10 @@
 import Foundation
 
 public class DownloadTask: Equatable {
-    internal let object: DownloadObject
-    internal weak var fileManager: DownloadFileManagerProtocol!
-    internal var terminated: (() -> Void)?
-    internal let task: URLSessionDownloadTask
+    let object: DownloadObject
+    weak var fileManager: DownloadFileManagerProtocol!
+    var terminated: (() -> Void)?
+    let task: URLSessionDownloadTask
     
     private(set) var completed = false
     

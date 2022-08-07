@@ -1,6 +1,6 @@
 //
 //  DownloadOperationQueueConfiguration.swift
-//  
+//
 //
 //  Created by Dorian Cheignon on 06/08/2022.
 //

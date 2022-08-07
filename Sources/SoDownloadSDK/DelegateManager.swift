@@ -1,16 +1,16 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Dorian Cheignon on 06/08/2022.
 //
 
 import Foundation
 
-internal class DelegateManager<T> {
+public class DelegateManager<T> {
     
     private let delegates: NSHashTable<AnyObject>
-    private let queue: DispatchQueue    
+    private let queue: DispatchQueue
     
     init(delegateQueue queue: DispatchQueue) {
         delegates = NSHashTable<AnyObject>.weakObjects()
