@@ -9,14 +9,22 @@ import Foundation
 
 public struct DownloadObject: Equatable {
     
+    public enum Priority {
+        case none
+        case low
+        case high
+    }
+    
     public let taskDescription: String
     public let url: URL?
     public let name: String
+    public let priority: Priority
 
     
-    public init(url: String) {
+    public init(url: String, priority: Priority = .none) {
         self.taskDescription = UUID().uuidString
         self.url = URL(string: url)
+        self.priority = priority
         guard let path = self.url?.lastPathComponent else {
             self.name = "unknown"
             return

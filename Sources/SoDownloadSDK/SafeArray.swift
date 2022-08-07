@@ -121,6 +121,12 @@ public extension SafeArray {
             DispatchQueue.main.async { completion?(elements) }
         }
     }
+    
+    func sorted(by criteria: (Element, Element) -> Bool) -> SafeArray {
+            var result: SafeArray?
+            queue.sync { result = SafeArray(self.array.sorted(by: criteria)) }
+            return result!
+    }
 }
 
 public extension SafeArray where Element: Equatable {

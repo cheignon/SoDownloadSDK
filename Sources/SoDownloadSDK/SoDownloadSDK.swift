@@ -82,7 +82,14 @@ public class SoDownloadSDK: NSObject {
             task?.resume()
             semaphore.wait()
         })
-        
+        switch task.object.priority {
+        case .high:
+            operation.queuePriority = .veryHigh
+        case .low:
+            operation.queuePriority = .low
+        case .none:
+            operation.queuePriority = .normal
+        }
         queue.addOperation(operation: operation)
         delegates.call { $0.downloader(self, didStartDownloadingResource: task.object, withTask: task.task) }
     }
@@ -176,7 +183,7 @@ extension SoDownloadSDK: URLSessionTaskDelegate {
 }
 
 extension SoDownloadSDK: URLSessionDownloadDelegate {
-  
+    
     
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         guard let task = self.downloadTask(for: downloadTask) else { return }
