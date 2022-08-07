@@ -8,7 +8,7 @@
 import Foundation
 
 
-internal class DownloadsFileManager: DownloadFileManagerProtocol {
+public class DownloadsFileManager: DownloadFileManagerProtocol {
        
     public static var `default`: DownloadsFileManager {
         return DownloadsFileManager(with: "SoDownloadSDK")
