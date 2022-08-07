@@ -152,8 +152,10 @@ public class SoDownloadSDK: NSObject {
     
     /// list  of task for file to download
     /// - Returns: array of DownloadTask
-    public func getDownloads() -> [DownloadTask] {
-        return tasks.array
+    public func getDownloads() -> [DownloadObject] {
+        return tasks.array.map { task in
+            return task.object
+        }
     }
     
     
